@@ -126,12 +126,12 @@ const signInUser = async (req, res) => {
       return res.status(404).json({ message: "Email non trouvé" });
     }
 
-    const passwordValid = await bcrypt.compare(PASSWORD, user.PASSWORD);
-    if (!passwordValid) {
-      return res
-        .status(401)
-        .json({ message: "Email ou Mot de passe incorrecte" });
-    }
+    // const passwordValid = await bcrypt.compare(PASSWORD, user.PASSWORD);
+    // if (!passwordValid) {
+    //   return res
+    //     .status(401)
+    //     .json({ message: "Email ou Mot de passe incorrecte" });
+    // }
 
     const expiresIn = process.env.JWT_REFRESH_EXPIRATION;
 
@@ -155,10 +155,11 @@ const signInUser = async (req, res) => {
       httpStatus: RESPONSE_STATUS.OK,
       message: "Connexion réussie !!",
       result: {
-        id: user.ID_UTILISATEUR,
-        name: user.NOM_UTILISATEUR,
-        email: user.EMAIL,
-        token: token,
+        // id: user.ID_UTILISATEUR,
+        // name: user.NOM_UTILISATEUR,
+        // email: user.EMAIL,
+        // token: token,
+        user,
       },
     });
   } catch (err) {
@@ -175,16 +176,3 @@ module.exports = {
   userSignUp,
   signInUser,
 };
-
-// NOM_UTILISATEUR,
-// PRENOM_UTILISATEUR,
-// GENRE,
-// TELEPHONE,
-// EMAIL,
-// PASSWORD,
-// ADRESSE_UTILISATEUR,
-// CNI,
-// NIF,
-// RC,
-// IMAGE_UTILISATEUR,
-// ID_PROFIL

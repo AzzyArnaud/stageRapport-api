@@ -1,9 +1,14 @@
-const express = require("express")
-const chatController = require("../../controllers/chatMessage/chatMessageController")
+const express = require("express");
+const chatController = require("../../controllers/chatMessage/chatMessageController");
 
-const chatRoutes = express.Router()
+const chatRoutes = express.Router();
 
-chatRoutes.post("/send", chatController.sendMessage),
-chatRoutes.get("/allMessage", chatController.getAllMessage)
+// Route pour envoyer un message
+chatRoutes.post("/send", (req, res) =>
+  chatController.sendMessage(req, res, req.app.get("io"))
+);
 
-module.exports = chatRoutes
+// Route pour récupérer tous les messages
+chatRoutes.get("/allMessage", chatController.getAllMessage);
+
+module.exports = chatRoutes;

@@ -15,6 +15,7 @@ const AddArticle = async (req, res) => {
       MARQUE_ARTICLE,
       DESCRIPTION_ARTICLE,
       STATUT_ARTICLE,
+      TELEPHONE,
       ADRESSE_ARTICLE,
       LONGITUDE_ARTICLE,
       LATITUDE_ARTICLE,
@@ -34,6 +35,7 @@ const AddArticle = async (req, res) => {
         MARQUE_ARTICLE: { required: true },
         DESCRIPTION_ARTICLE: { required: true },
         STATUT_ARTICLE: { required: true },
+        TELEPHONE: { required: true },
         IMAGE_1: {
           required: false, // Rendre l'image optionnelle
           image: 4000000, // Toujours valider la taille de l'image si elle est fournie
@@ -48,6 +50,7 @@ const AddArticle = async (req, res) => {
         MARQUE_ARTICLE: { required: "Ce Champ est Obligatoire" },
         DESCRIPTION_ARTICLE: { required: "Ce Champ est Obligatoire" },
         STATUT_ARTICLE: { required: "Ce Champ est Obligatoire" },
+        TELEPHONE: { required: "Ce Champ est Obligatoire" },
         IMAGE_1: { required: "Ce Champ est Obligatoire" },
         ADRESSE_ARTICLE: { required: "Ce Champ est Obligatoire" },
         LONGITUDE_ARTICLE: { required: "Ce Champ est Obligatoire" },
@@ -101,6 +104,7 @@ const AddArticle = async (req, res) => {
       MARQUE_ARTICLE,
       DESCRIPTION_ARTICLE,
       STATUT_ARTICLE,
+      TELEPHONE,
       IMAGES_1: filename_1,
       IMAGES_2: filename_2,
       IMAGES_3: filename_3,
