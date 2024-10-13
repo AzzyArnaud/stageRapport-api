@@ -10,7 +10,7 @@ const RESPONSE_STATUS = require("./constants/RESPONSE_STATUS");
 const UserRoutes = require("./routes/utilisateurs/userRoutes");
 const categoriesRouter = require("./routes/categories/categoriesRoutes");
 const ArticleRoutes = require("./routes/article/articleRoutes");
-const chatRoutes = require("./routes/chatMessage/chatMessageRoutes");
+const conservation = require("./routes/conversation/conversation");
 
 const app = express();
 const server = http.createServer(app);
@@ -47,15 +47,29 @@ app.use(fileUpload());
 app.use("/users", UserRoutes);
 app.use("/category", categoriesRouter);
 app.use("/articles", ArticleRoutes);
+
+// Passe `io` dans les routes
+const chatRoutes = require("./routes/chatMessage/chatMessageRoutes")(io);
 app.use("/message", chatRoutes);
+app.use("/conversation", conservation);
 
 // Gestion des sockets en temps réel
 io.on("connection", (socket) => {
   console.log("Un utilisateur est connecté : ", socket.id);
 
+  // Joindre une room spécifique à un article pour des discussions privées
+  socket.on("joinArticleRoom", (articleId) => {
+    socket.join(articleId);
+    console.log(
+      `Utilisateur ${socket.id} a rejoint la room pour l'article ${articleId}`
+    );
+  });
+
+  // Réception des messages de chat
   socket.on("chatMessage", (message) => {
-    console.log("Message reçu : ", message);
-    io.emit("chatMessage", message);
+    const { ID_ARTICLE } = message;
+    console.log("Message reçu pour l'article", ID_ARTICLE, message);
+    io.to(ID_ARTICLE).emit("chatMessage", message);
   });
 
   socket.on("disconnect", () => {

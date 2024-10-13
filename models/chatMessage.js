@@ -1,14 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../utils/sequerize");
-const Utilisateurs = require("./Utilisateurs");
-const Articles = require("./Articles");
+const Conversation = require("./Conversation");
 
-/**
- * Table chatmessages
- *@author Yvan Illich
- *@date 4/09/2024
- * Ce modèle sera utilisé pour stocker les messages provenant du chat en temps réel
- */
 const ChatMessage = sequelize.define(
   "chatmessages",
   {
@@ -22,20 +15,12 @@ const ChatMessage = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    ID_UTILISATEUR: {
+    ID_CONVERSATION: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: Utilisateurs, // correction ici pour s'assurer que le modèle correspond
-        key: "ID_UTILISATEUR",
-      },
-    },
-    ID_ARTICLE: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: Articles, // correction ici aussi pour s'assurer que le modèle correspond
-        key: "ID_ARTICLE",
+        model: Conversation,
+        key: "ID_CONVERSATION",
       },
     },
     DATE_ENVOYE: {
@@ -51,15 +36,9 @@ const ChatMessage = sequelize.define(
   }
 );
 
-// Associations
-ChatMessage.belongsTo(Utilisateurs, {
-  foreignKey: "ID_UTILISATEUR",
-  as: "utilisateur",
-});
-
-ChatMessage.belongsTo(Articles, {
-  foreignKey: "ID_ARTICLE",
-  as: "article",
+ChatMessage.belongsTo(Conversation, {
+  foreignKey: "ID_CONVERSATION",
+  as: "conversation",
 });
 
 module.exports = ChatMessage;

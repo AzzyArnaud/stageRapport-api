@@ -5,6 +5,7 @@ const RESPONSE_CODES = require("../../constants/RESPONSE_CODES");
 const Categories = require("../../models/Categories");
 const Articles = require("../../models/Articles");
 const { Op } = require("sequelize");
+const Utilisateurs = require("../../models/Utilisateurs");
 
 const getAllCategory = async (req, res) => {
   try {
@@ -69,57 +70,61 @@ const getAllArticles = async (req, res) => {
       ...globalSearchWhereLike,
     };
 
-        // Ajouter le filtre par ID_CATEGORIE si présent
-        if (id_category) {
-            whereClause.ID_CATEGORIE = id_category;
-        }
-        const articles = await Articles.findAndCountAll({
-            attributes: [
-                'ID_ARTICLE',
-                'NOM_ARTICLE',
-                'MARQUE_ARTICLE',
-                'DESCRIPTION_ARTICLE',
-                'STATUT_ARTICLE',
-                'IMAGES_1',
-                'IMAGES_2',
-                'IMAGES_3',
-                'ADRESSE_ARTICLE',
-                'LONGITUDE_ARTICLE',
-                'LATITUDE_ARTICLE',
-                'DATE_INSERT',
-                'ID_CATEGORIE'
-            ],
-            where: {
-                ...whereClause,
-                STATUT_ARTICLE: { [Op.ne]: 0 } // Exclure les articles avec un statut de 0
-            },
-            include: [
-                {
-                    model: Categories,
-                    as: "categorie_article",
-                    required: true,
-                },
-            ],
-            limit: parseInt(rows, 10),
-            offset: parseInt(first, 10),
-            order: [
-                ['DATE_INSERT', 'DESC'],
-            ]
-        });
-        res.status(RESPONSE_CODES.OK).json({
-            statusCode: RESPONSE_CODES.OK,
-            httpStatus: RESPONSE_STATUS.OK,
-            message: "Liste des articles",
-            result: articles
-    })
-    } catch (error) {
-        console.log(error)
-        res.status(RESPONSE_CODES.INTERNAL_SERVER_ERROR).json({
-            statusCode: RESPONSE_CODES.INTERNAL_SERVER_ERROR,
-            httpStatus: RESPONSE_STATUS.INTERNAL_SERVER_ERROR,
-            message: "Erreur interne du serveur, réessayer plus tard",
-          });
+    // Ajouter le filtre par ID_CATEGORIE si présent
+    if (id_category) {
+      whereClause.ID_CATEGORIE = id_category;
     }
+    const articles = await Articles.findAndCountAll({
+      attributes: [
+        "ID_ARTICLE",
+        "NOM_ARTICLE",
+        "MARQUE_ARTICLE",
+        "DESCRIPTION_ARTICLE",
+        "STATUT_ARTICLE",
+        "IMAGES_1",
+        "IMAGES_2",
+        "IMAGES_3",
+        "ADRESSE_ARTICLE",
+        "LONGITUDE_ARTICLE",
+        "LATITUDE_ARTICLE",
+        "DATE_INSERT",
+        "ID_CATEGORIE",
+        "ID_SELLER",
+      ],
+      where: {
+        ...whereClause,
+        STATUT_ARTICLE: { [Op.ne]: 0 }, // Exclure les articles avec un statut de 0
+      },
+      include: [
+        {
+          model: Categories,
+          as: "categorie_article",
+          required: true,
+        },
+        {
+          model: Utilisateurs,
+          as: "seller",
+          required: true,
+        },
+      ],
+      limit: parseInt(rows, 10),
+      offset: parseInt(first, 10),
+      order: [["DATE_INSERT", "DESC"]],
+    });
+    res.status(RESPONSE_CODES.OK).json({
+      statusCode: RESPONSE_CODES.OK,
+      httpStatus: RESPONSE_STATUS.OK,
+      message: "Liste des articles",
+      result: articles,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(RESPONSE_CODES.INTERNAL_SERVER_ERROR).json({
+      statusCode: RESPONSE_CODES.INTERNAL_SERVER_ERROR,
+      httpStatus: RESPONSE_STATUS.INTERNAL_SERVER_ERROR,
+      message: "Erreur interne du serveur, réessayer plus tard",
+    });
+  }
 };
 
 module.exports = {

@@ -1,12 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../utils/sequerize");
+const Utilisateurs = require("./Utilisateurs");
 const Categories = require("./Categories");
-
-/**
- * Table Articles
- * @author Yvan illich
- * @date 31/08/2023
- */
 const Articles = sequelize.define(
   "articles",
   {
@@ -32,10 +27,7 @@ const Articles = sequelize.define(
       type: DataTypes.INTEGER,
       defaultValue: 1,
     },
-    TELEPHONE: {
-      type: DataTypes.STRING(25),
-      allowNull: false,
-    },
+
     IMAGES_1: {
       type: DataTypes.STRING(255),
       allowNull: false,
@@ -73,6 +65,14 @@ const Articles = sequelize.define(
         key: "ID_CATEGORIE",
       },
     },
+    ID_SELLER: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "utilisateurs", // Linking to the "utilisateurs" table (users table)
+        key: "ID_UTILISATEUR", // Foreign key referring to the user who is selling
+      },
+    },
   },
   {
     freezeTableName: true,
@@ -81,6 +81,9 @@ const Articles = sequelize.define(
   }
 );
 
+// Association between Articles and Utilisateurs (Sellers)
+Articles.belongsTo(Utilisateurs, { foreignKey: "ID_SELLER", as: "seller" });
+Utilisateurs.hasMany(Articles, { foreignKey: "ID_SELLER", as: "seller" });
 Articles.belongsTo(Categories, {
   foreignKey: "ID_CATEGORIE",
   as: "categorie_article",
@@ -89,5 +92,4 @@ Categories.hasMany(Articles, {
   foreignKey: "ID_CATEGORIE",
   as: "categorie_article",
 });
-
 module.exports = Articles;
